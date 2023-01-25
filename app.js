@@ -2,18 +2,12 @@ const express = require("express");
 const m = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-const https = require("https")
-const pcloud = require("pcloud-sdk-js");
-const { ApiRequest, createClient, ApiMethod, oauth } = require("pcloud-sdk-js");
-const token = process.env.TOKEN;
-
-const client = pcloud.createClient(token);
 
 
 const app = express();
 m.set("strictQuery", true);
 
-m.connect("mongodb+srv://malazAdmin:malazAdmin@appdb.c8ohgxc.mongodb.net/UserDB")
+m.connect(process.env.DB)
     .then(v => console.log("connected to db"))
     .catch((e) => console.log("failed to connect to db"))
 app.use(morgan("tiny"))
@@ -107,19 +101,3 @@ app.listen(process.env.PORT||3000, () => {
 
 
 
-
-/*  const result = https.get("https://my.pcloud.com/oauth2/authorize?client_id=GbAAXvWMnq5&&response_type=token", (cloud_response) => {
-     console.log(cloud_response.statusCode);
-     console.log(cloud_response.statusMessage);
-     cloud_response.on("data", (data) => {
-         console.log(data);
-         res.send(data)
-     })
- }) */
-
-/*    const user=new User({
-   key:"999",
-   
-})
-await user.save();
-res.send("saved")  */
