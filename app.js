@@ -17,9 +17,7 @@ app.use(express.json())
 const userSchema = m.Schema({
     key: {
         type: String,
-        required: true,
         min: 8,
-        unique:true
     },
     registerDate: {
         type: Date,
@@ -65,19 +63,25 @@ app.post('/api', async (req, res) => {
             user.registerDate = register;
             user.deviceID = req.body.deviceID
             await user.save()
+            console.log("new user => "+req.body);
             res.send("valid")
 
         }
         else {
             if (user.expireDate.getTime() < Date.now() ) {
                 await User.deleteOne({_id:user._id})
+                console.log("Expired Key => "+req.body);
+
                 res.json({"error": "Expired Key"})
             }
             if ( user.deviceID !== req.body.deviceID) {
+                console.log("This Key Is Used => "+req.body);
                 res.json({"error": "This Key Is Used"})
             }
             
             else {
+                console.log("registerd user => "+req.body);
+                
                 res.send("valid")
             }
 
