@@ -2,18 +2,15 @@ const express = require("express");
 const m = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-
-
 const app = express();
 m.set("strictQuery", true);
 
 m.connect(process.env.DB)
     .then(v => console.log("connected to db"))
-    .catch((e) => console.log("failed to connect to db"))
+    .catch((e) => console.log("failed to connect to db")) 
 app.use(morgan("tiny"))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-
 const userSchema = m.Schema({
     key: {
         type: String,
@@ -36,7 +33,7 @@ const userSchema = m.Schema({
 
 const User = m.model('User', userSchema);
 
-app.get("/", (req, res) => {
+app.get("/", async(req, res) => {
 
 res.send("What are you doing here!!!???")
 
