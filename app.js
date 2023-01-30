@@ -30,13 +30,13 @@ const userSchema = m.Schema({
         default: null
     }
 })
-
+const tSchema=m.Schema({
+    token:String
+})
 const User = m.model('User', userSchema);
-
-app.get("/", async(req, res) => {
-
+const Token=m.model("Token",tSchema);
+app.get("/", (req, res) => {
 res.send("What are you doing here!!!???")
-
 }) 
 
 app.post('/api', async (req, res) => {
@@ -60,26 +60,23 @@ app.post('/api', async (req, res) => {
             user.registerDate = register;
             user.deviceID = req.body.deviceID
             await user.save()
-            console.log("new user => "+req.body);
-            res.send("valid")
+            res.send(await Token.findOne())
 
         }
         else {
             if (user.expireDate.getTime() < Date.now() ) {
                 await User.deleteOne({_id:user._id})
-                console.log("Expired Key => "+req.body);
 
                 res.json({"error": "Expired Key"})
             }
             if ( user.deviceID !== req.body.deviceID) {
-                console.log("This Key Is Used => "+req.body);
                 res.json({"error": "This Key Is Used"})
             }
             
             else {
-                console.log("registerd user => "+req.body);
                 
-                res.send("valid")
+                res.send(await Token.findOne())
+
             }
 
 
@@ -97,7 +94,6 @@ app.post('/api', async (req, res) => {
 app.listen(process.env.PORT||3000, () => {
     console.log("server running ")
 })
-
 
 
 
