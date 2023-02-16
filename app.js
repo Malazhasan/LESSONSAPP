@@ -5,7 +5,8 @@ const bodyParser = require("body-parser");
 const app = express();
 m.set("strictQuery", true);
 
-m.connect(process.env.DB)
+//m.connect(process.env.DB)
+m.connect("mongodb+srv://malazAdmin:malazAdmin@appdb.c8ohgxc.mongodb.net/UserDB")
     .then(v => console.log("connected to db"))
     .catch((e) => console.log("failed to connect to db")) 
 app.use(morgan("tiny"))
@@ -37,6 +38,7 @@ const User = m.model('User', userSchema);
 const Token=m.model("Token",tSchema);
 app.get("/", (req, res) => {
 res.send("What are you doing here!!!???")
+
 }) 
 
 app.post('/api', async (req, res) => {
@@ -49,16 +51,24 @@ app.post('/api', async (req, res) => {
         if (user.expireDate === null || user.registerDate === null || user.deviceID === null) {
             const register = new Date(Date.now());
             let year = register.getFullYear();
-            let month = register.getMonth() + 1;
+            let month = register.getMonth()+2 ;
+            
+           
             if (month === 12) {
                 year++;
                 month = 0;
             }
+            if (month === 13) {
+                year++;
+                month = 1;
+            }
+           
             const day = register.getDate();
             const expire = new Date(year, month, day)
             user.expireDate = expire;
             user.registerDate = register;
             user.deviceID = req.body.deviceID
+
             await user.save()
             res.send(await Token.findOne())
 
