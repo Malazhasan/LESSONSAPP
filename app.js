@@ -1,12 +1,13 @@
 const express = require("express");
+var {nanoid} =require('nanoid');
 const m = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+
 const app = express();
 m.set("strictQuery", true);
 
-//m.connect(process.env.DB)
-m.connect("mongodb+srv://malazAdmin:malazAdmin@appdb.c8ohgxc.mongodb.net/UserDB")
+m.connect(process.env.DB)
     .then(v => console.log("connected to db"))
     .catch((e) => console.log("failed to connect to db")) 
 app.use(morgan("tiny"))
@@ -16,6 +17,7 @@ const userSchema = m.Schema({
     key: {
         type: String,
         min: 8,
+        unique:true
     },
     registerDate: {
         type: Date,
@@ -36,9 +38,8 @@ const tSchema=m.Schema({
 })
 const User = m.model('User', userSchema);
 const Token=m.model("Token",tSchema);
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
 res.send("What are you doing here!!!???")
-
 }) 
 
 app.post('/api', async (req, res) => {
@@ -70,6 +71,8 @@ app.post('/api', async (req, res) => {
             user.deviceID = req.body.deviceID
 
             await user.save()
+            const key=nanoid(8);
+            await User.insertMany({key}).catch(e=>console.log(e))
             res.send(await Token.findOne())
 
         }
@@ -97,7 +100,14 @@ app.post('/api', async (req, res) => {
     else {
         res.json({"error":"Key is invalid"});}
 
+})
 
+app.get("/private/pkeys",async(req,res)=>{
+if(req.query.auth&&req.query.auth===process.env.auth){
+    const list=await User.find({deviceID:null}).select("key -_id")
+    res.send(list) 
+}
+else res.send("invalid request")
 
 })
 
