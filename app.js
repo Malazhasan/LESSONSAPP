@@ -73,7 +73,7 @@ app.post('/api', async (req, res) => {
             await user.save()
             const key=nanoid(8);
             await User.insertMany({key}).catch(e=>console.log(e))
-            res.send(await Token.findOne())
+            res.send(c)
 
         }
         else {
@@ -109,6 +109,19 @@ if(req.query.auth&&req.query.auth===process.env.auth){
 }
 else res.send("invalid request")
 
+})
+app.post("/private/setToken",async(req,res)=>{
+    if(!req.body||!req.body.newToken||!req.query.auth||req.query.auth!==process.env.auth){
+        console.log(req.query);
+        res.status(404).send("invalid requset")
+    }
+    else{
+      
+        const doc= await Token.findOne();
+        doc.token=req.body.newToken;
+        await doc.save()
+        res.send("successfully updated")
+    }
 })
 
 app.listen(process.env.PORT||3000, () => {
