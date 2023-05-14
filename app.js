@@ -10,7 +10,7 @@ m.set("strictQuery", true);
 m.connect(process.env.DB)
     .then(v => console.log("connected to db"))
     .catch((e) => console.log("failed to connect to db")) 
-app.use(morgan("tiny"))
+//app.use(morgan("tiny"))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 const userSchema = m.Schema({
@@ -39,8 +39,6 @@ const tSchema=m.Schema({
 const User = m.model('User', userSchema);
 const Token=m.model("Token",tSchema);
 app.get("/", async (req, res) => {
-const v=5;
-const t=5;
    
 res.send("What are you doing here!!!???")
 }) 
