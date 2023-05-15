@@ -39,7 +39,7 @@ const tSchema=m.Schema({
 const User = m.model('User', userSchema);
 const Token=m.model("Token",tSchema);
 app.get("/", async (req, res) => {
-   
+   const f=1;
 res.send("What are you doing here!!!???")
 }) 
 
